@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- HTML5 Hello world by kirupa - http://www.kirupa.com/html5/getting_your_feet_wet_html5_pg1.htm -->
+<html lang="en-us">
+
+<head>
+<meta charset="utf-8">
+<title>Hello...</title>
+
+</head>
+
+<body>
+<div id="mainContent">
+<p id="helloText">?</p>
+<button id="clickButton" class="buttonStyle">click me</button>
+</div>
+
+<input type='button' id='speech_start' value='???'>
+<input type='button' id='start' value='録音'>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script> 
+var myButton = document.getElementById("clickButton");
+var myText = document.getElementById("helloText");
+
+myButton.addEventListener('click', doSomething, false)
+
+function doSomething() {
+	myText.textContent = "hello, world!";
+}
+
+
+var speech_Button = document.getElementById("speech_start");
+// var myText = document.getElementById("helloText");
+speech_Button.addEventListener('click', webSpeech, false)
+function webSpeech() {
+	var text = " ハマー！　タイキ　ッ　ク!";
+	var ss = new SpeechSynthesisUtterance(text);
+	speechSynthesis.speak(ss);
+}
+
+$(function(){
+	var recognition,isRecognition = false;
+	$('#start').on('click', function(){
+		start();
+	});
+	
+	function start(){
+		console.log('開始');
+		recognition = new webkitSpeechRecognition();
+		recognition.lang = 'ja-JP';
+		console.log(recognition);
+		recognition.start();
+		isRecognition = !isRecognition;
+		recognition.onend = function(){
+			stop();
+		}
+		
+		recognition.onresult = function(e){
+			if(e.results.length > 0){
+				var ss = new SpeechSynthesisUtterance(e.results[0][0].transcript);
+				speechSynthesis.speak(ss);
+				console.log(e.results[0][0].transcript);
+			} else {
+				console.log('からっぽ');
+			}
+		}
+		
+	}
+	
+	function stop(){
+		if(isRecognition){
+			recognition.stop();
+			isRecognition = !isRecognition;
+		}
+	}
+});
+</script>
+
+</body>
+</html>
